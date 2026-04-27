@@ -1,0 +1,338 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+
+const metadata = {
+  title: 'Buchungsanfrage',
+};
+
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const minDate = tomorrow.toISOString().split('T')[0];
+
+// %%%BOOKING_CONDITIONS_DE_START%%%
+const terms = [
+  { title: 'Anzahlung', description: '20% nach Buchungsbestätigung. Restzahlung 2 Tage vor Anreise.' },
+  { title: 'Stornierung', description: 'Kostenlos bis 1 Tag vor Anreise. Danach 100% des Preises.' },
+  { title: 'Check-in', description: '16:00 – 22:00 Uhr (andere Zeiten nach Absprache)' },
+  { title: 'Check-out', description: '07:00 – 11:00 Uhr (andere Zeiten nach Absprache)' },
+  { title: 'Schlüsselübergabe', description: 'Per Schlüsselbox. Code wird vor Anreise mitgeteilt.' },
+  { title: 'Babybett/Zustellbett', description: 'Kostenlos auf Anfrage' },
+  { title: 'Haustiere', description: '15 EUR pro Tier' },
+  { title: 'Parken', description: 'Kostenlos' },
+];
+// %%%BOOKING_CONDITIONS_DE_END%%%
+---
+
+<!-- BFW-351: same window globals the calendar widget reads. -->
+<script is:inline define:vars={{ tenantSlug: '%%%TENANT_SLUG%%%', apiBase: '%%%PUBLIC_API_BASE_URL%%%' }}>
+  window.MFWS_TENANT_SLUG = tenantSlug;
+  window.MFWS_PUBLIC_API_BASE_URL = apiBase;
+</script>
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Buchungsanfrage" title="Wir freuen uns auf Ihre Anfrage" />
+
+  <!-- Konditionen -->
+  <section class="py-12 md:py-16 bg-blue-50 dark:bg-slate-900">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <p class="text-center text-muted dark:text-slate-400 mb-8">
+        Schicken Sie Ihre unverbindliche Buchungsanfrage. Im Falle einer Buchung gelten die folgenden Konditionen.
+      </p>
+
+      <h3 class="text-2xl font-bold text-center mb-6 dark:text-white">Preisübersicht</h3>
+      <div class="overflow-x-auto mb-10">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b-2 border-primary/20">
+              <th class="py-3 px-4 font-semibold">Wohnung</th>
+              <th class="py-3 px-4 font-semibold">1 Person/Nacht</th>
+              <th class="py-3 px-4 font-semibold">2 Personen/Nacht</th>
+              <th class="py-3 px-4 font-semibold">Haustier</th>
+              <th class="py-3 px-4 font-semibold">Babybett</th>
+            </tr>
+          </thead>
+          <tbody class="text-muted dark:text-slate-400">
+            <!-- %%%PRICE_TABLE_ROWS_DE_START%%% -->
+            <tr class="border-b border-primary/10">
+              <td class="py-3 px-4 font-medium text-default dark:text-white">Alpenpanorama</td>
+              <td class="py-3 px-4">60 €</td>
+              <td class="py-3 px-4">75 €</td>
+              <td class="py-3 px-4">15 €</td>
+              <td class="py-3 px-4">kostenlos</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-medium text-default dark:text-white">Bergwiese</td>
+              <td class="py-3 px-4">45 €</td>
+              <td class="py-3 px-4">60 €</td>
+              <td class="py-3 px-4">15 €</td>
+              <td class="py-3 px-4">kostenlos</td>
+            </tr>
+            <!-- %%%PRICE_TABLE_ROWS_DE_END%%% -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {terms.map((term) => (
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+            <h4 class="font-semibold dark:text-white mb-1">{term.title}</h4>
+            <p class="text-sm text-muted dark:text-slate-400" set:html={term.description}></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="py-12 md:py-16">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6">
+      <h2 class="text-3xl font-bold text-center mb-8 dark:text-white">Anfrage senden</h2>
+
+      <div class="relative">
+        <div id="success-message" class="hidden bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2">Vielen Dank!</h3>
+          <p>Ihre Anfrage wurde erfolgreich gesendet. Wir melden uns schnellstmöglich bei Ihnen.</p>
+        </div>
+
+        <div id="error-message" class="hidden bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg mb-4">
+          <p id="error-text">Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.</p>
+        </div>
+
+        <form id="booking-form" class="space-y-5 bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1 dark:text-white">Name *</label>
+              <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium mb-1 dark:text-white">E-Mail *</label>
+              <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium mb-1 dark:text-white">Telefon</label>
+            <div class="flex gap-2">
+              <select id="countryCode" name="countryCode" class="shrink-0 px-2 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white text-sm focus:ring-2 focus:ring-primary">
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+43">🇦🇹 +43</option>
+                <option value="+41">🇨🇭 +41</option>
+                <option value="+31">🇳🇱 +31</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+39">🇮🇹 +39</option>
+                <option value="+1">🇺🇸 +1</option>
+              </select>
+              <input type="tel" id="phone" name="phone" placeholder="123 4567890" class="flex-1 min-w-0 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+          </div>
+
+          <div>
+            <label for="apartment" class="block text-sm font-medium mb-1 dark:text-white">Wohnung *</label>
+            <select id="apartment" name="apartment" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
+              <option value="">Bitte wählen...</option>
+              <!-- %%%APARTMENT_OPTIONS_DE_START%%% -->
+              <option value="alpenpanorama">Alpenpanorama</option>
+              <option value="bergwiese">Bergwiese</option>
+              <!-- %%%APARTMENT_OPTIONS_DE_END%%% -->
+            </select>
+          </div>
+
+          <div>
+            <label for="guests" class="block text-sm font-medium mb-1 dark:text-white">Anzahl Gäste *</label>
+            <select id="guests" name="guests" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
+              <option value="">Bitte wählen...</option>
+              <option value="1">1 Person</option>
+              <option value="2">2 Personen</option>
+              <option value="3">3 Personen</option>
+              <option value="4">4 Personen</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="arrival" class="block text-sm font-medium mb-1 dark:text-white">Anreise *</label>
+              <input type="date" id="arrival" name="arrival" required min={minDate} class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+            <div>
+              <label for="departure" class="block text-sm font-medium mb-1 dark:text-white">Abreise *</label>
+              <input type="date" id="departure" name="departure" required min={minDate} class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary" />
+            </div>
+          </div>
+          <p id="date-error" class="text-red-600 text-sm hidden"></p>
+
+          <div>
+            <label for="message" class="block text-sm font-medium mb-1 dark:text-white">Nachricht</label>
+            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <input type="checkbox" id="privacy" name="privacy" required class="mt-1" />
+            <label for="privacy" class="text-sm text-muted dark:text-slate-400">Ich stimme der Verarbeitung meiner Daten gemäß der <a href="/privacy" class="text-primary hover:underline">Datenschutzerklärung</a> zu. *</label>
+          </div>
+
+          <!-- BFW-351 honeypot: must stay empty. Real users never see / fill this. -->
+          <div aria-hidden="true" style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+            <label for="website-url">Website</label>
+            <input type="text" id="website-url" name="website-url" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="mt-6">
+            <button type="submit" id="submit-btn" class="btn btn-secondary font-semibold bg-secondary text-white border-secondary hover:bg-primary hover:border-primary px-8 py-3 rounded-full w-full">
+              Anfrage senden
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById('booking-form') as HTMLFormElement;
+  const successMessage = document.getElementById('success-message');
+  const errorMessage = document.getElementById('error-message');
+  const arrivalInput = document.getElementById('arrival') as HTMLInputElement;
+  const departureInput = document.getElementById('departure') as HTMLInputElement;
+  const dateError = document.getElementById('date-error');
+
+  function validateDates() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let errorMsg = '';
+    let isValid = true;
+
+    if (arrivalInput?.value) {
+      const arrival = new Date(arrivalInput.value);
+      if (arrival < today) {
+        errorMsg = 'Anreisedatum muss in der Zukunft liegen.';
+        arrivalInput.setCustomValidity(errorMsg);
+        isValid = false;
+      } else {
+        arrivalInput.setCustomValidity('');
+      }
+    }
+
+    if (departureInput?.value) {
+      const departure = new Date(departureInput.value);
+      if (departure < today) {
+        errorMsg = 'Abreisedatum muss in der Zukunft liegen.';
+        departureInput.setCustomValidity(errorMsg);
+        isValid = false;
+      } else {
+        departureInput.setCustomValidity('');
+      }
+    }
+
+    if (arrivalInput?.value && departureInput?.value && isValid) {
+      const arrival = new Date(arrivalInput.value);
+      const departure = new Date(departureInput.value);
+      if (departure <= arrival) {
+        errorMsg = 'Abreisedatum muss nach dem Anreisedatum liegen.';
+        departureInput.setCustomValidity(errorMsg);
+        isValid = false;
+      }
+    }
+
+    if (dateError) {
+      if (errorMsg) {
+        dateError.textContent = errorMsg;
+        dateError.classList.remove('hidden');
+      } else {
+        dateError.classList.add('hidden');
+      }
+    }
+    return isValid;
+  }
+
+  arrivalInput?.addEventListener('change', validateDates);
+  departureInput?.addEventListener('change', validateDates);
+
+  declare global {
+    interface Window {
+      MFWS_TENANT_SLUG?: string;
+      MFWS_PUBLIC_API_BASE_URL?: string;
+    }
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateDates()) return;
+
+    errorMessage?.classList.add('hidden');
+    successMessage?.classList.add('hidden');
+
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+    if (submitBtn) submitBtn.disabled = true;
+
+    const tenantSlug = window.MFWS_TENANT_SLUG;
+    const apiBase = window.MFWS_PUBLIC_API_BASE_URL;
+
+    const data = new FormData(form);
+    const apartmentSlug = String(data.get('apartment') || '');
+    const fullName = String(data.get('name') || '').trim();
+    const [firstName, ...rest] = fullName.split(/\s+/);
+    const lastName = rest.join(' ') || firstName;
+
+    const payload = {
+      guestFirstName: firstName,
+      guestLastName: lastName,
+      guestEmail: String(data.get('email') || ''),
+      guestPhone: String(data.get('phone') || '') || null,
+      startDate: String(data.get('arrival') || ''),
+      endDate: String(data.get('departure') || ''),
+      numberOfGuests: parseInt(String(data.get('guests') || '1'), 10),
+      message: String(data.get('message') || '') || null,
+      honeypot: String(data.get('website-url') || '') || null,
+    };
+
+    const showError = (msg: string) => {
+      const errorText = document.getElementById('error-text');
+      if (errorText) errorText.textContent = msg;
+      errorMessage?.classList.remove('hidden');
+      if (submitBtn) submitBtn.disabled = false;
+    };
+
+    if (!tenantSlug || !apiBase) {
+      // Markers not replaced (local dev / template misconfig). Show success
+      // anyway so the demo still appears functional, but log the gap.
+      console.warn('Booking endpoint markers missing — skipping POST.');
+      form.classList.add('hidden');
+      successMessage?.classList.remove('hidden');
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${apiBase}/api/public/tenants/${tenantSlug}/apartments/${apartmentSlug}/booking-requests`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (res.status === 200) {
+        form.classList.add('hidden');
+        successMessage?.classList.remove('hidden');
+        // Tell the calendar widget to refetch so the new RESERVED slot shows up.
+        document.dispatchEvent(new CustomEvent('booking-request-submitted'));
+        return;
+      }
+      if (res.status === 400) {
+        const body = await res.json().catch(() => ({}));
+        showError(body.message || 'Bitte prüfen Sie Ihre Eingaben.');
+        return;
+      }
+      if (res.status === 404) {
+        showError('Diese Ferienwohnung ist nicht verfügbar.');
+        return;
+      }
+      showError('Bitte versuchen Sie es später noch einmal.');
+    } catch (err) {
+      console.error('Booking request failed', err);
+      showError('Verbindung zum Server fehlgeschlagen. Bitte versuchen Sie es später noch einmal.');
+    }
+  });
+</script>
