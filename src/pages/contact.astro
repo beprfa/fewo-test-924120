@@ -10,22 +10,20 @@ const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1);
 const minDate = tomorrow.toISOString().split('T')[0];
 
-// %%%BOOKING_CONDITIONS_DE_START%%%
 const terms = [
-  { title: 'Anzahlung', description: '20% nach Buchungsbestätigung. Restzahlung 2 Tage vor Anreise.' },
-  { title: 'Stornierung', description: 'Kostenlos bis 1 Tag vor Anreise. Danach 100% des Preises.' },
-  { title: 'Check-in', description: '16:00 – 22:00 Uhr (andere Zeiten nach Absprache)' },
-  { title: 'Check-out', description: '07:00 – 11:00 Uhr (andere Zeiten nach Absprache)' },
-  { title: 'Schlüsselübergabe', description: 'Per Schlüsselbox. Code wird vor Anreise mitgeteilt.' },
-  { title: 'Babybett/Zustellbett', description: 'Kostenlos auf Anfrage' },
-  { title: 'Haustiere', description: '15 EUR pro Tier' },
-  { title: 'Parken', description: 'Kostenlos' },
+  { title: 'Anzahlung', description: 'Eine Anzahlung von 30% des Gesamtbetrags ist innerhalb von 7 Tagen nach Buchungsbestätigung fällig.' },
+  { title: 'Stornierung', description: 'Kostenlose Stornierung bis 30 Tage vor Anreise. Danach werden 50% des Gesamtbetrags berechnet.' },
+  { title: 'Check-in', description: '15:00 – 18:00 Uhr (andere Zeiten nach Absprache)' },
+  { title: 'Check-out', description: '08:00 – 10:00 Uhr (andere Zeiten nach Absprache)' },
+  { title: 'Schlüsselübergabe', description: 'Die Schlüsselübergabe erfolgt persönlich vor Ort. Bitte melden Sie sich 30 Minuten vor Anreise telefonisch.' },
+  { title: 'Babybett/Zustellbett', description: 'Babybett und Zustellbett auf Anfrage verfügbar. Bitte bei der Buchung angeben.' },
+  { title: 'Haustiere', description: 'Haustiere sind nach Absprache willkommen. Es fällt eine Reinigungspauschale von 30€ an.' },
+  { title: 'Parken', description: 'Ein kostenloser Parkplatz steht direkt am Haus zur Verfügung.' },
 ];
-// %%%BOOKING_CONDITIONS_DE_END%%%
 ---
 
 <!-- BFW-351: same window globals the calendar widget reads. -->
-<script is:inline define:vars={{ tenantSlug: '%%%TENANT_SLUG%%%', apiBase: '%%%PUBLIC_API_BASE_URL%%%' }}>
+<script is:inline define:vars={{ tenantSlug: '924120', apiBase: 'http://localhost:9080' }}>
   window.MFWS_TENANT_SLUG = tenantSlug;
   window.MFWS_PUBLIC_API_BASE_URL = apiBase;
 </script>
@@ -53,22 +51,18 @@ const terms = [
             </tr>
           </thead>
           <tbody class="text-muted dark:text-slate-400">
-            <!-- %%%PRICE_TABLE_ROWS_DE_START%%% -->
             <tr class="border-b border-primary/10">
               <td class="py-3 px-4 font-medium text-default dark:text-white">Alpenpanorama</td>
               <td class="py-3 px-4">60 €</td>
               <td class="py-3 px-4">75 €</td>
-              <td class="py-3 px-4">15 €</td>
-              <td class="py-3 px-4">kostenlos</td>
+              <td class="py-3 px-4">45 €</td>
             </tr>
-            <tr>
+            <tr class="">
               <td class="py-3 px-4 font-medium text-default dark:text-white">Bergwiese</td>
               <td class="py-3 px-4">45 €</td>
               <td class="py-3 px-4">60 €</td>
-              <td class="py-3 px-4">15 €</td>
-              <td class="py-3 px-4">kostenlos</td>
+              <td class="py-3 px-4">35 €</td>
             </tr>
-            <!-- %%%PRICE_TABLE_ROWS_DE_END%%% -->
           </tbody>
         </table>
       </div>
@@ -132,10 +126,8 @@ const terms = [
             <label for="apartment" class="block text-sm font-medium mb-1 dark:text-white">Wohnung *</label>
             <select id="apartment" name="apartment" required class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
               <option value="">Bitte wählen...</option>
-              <!-- %%%APARTMENT_OPTIONS_DE_START%%% -->
               <option value="alpenpanorama">Alpenpanorama</option>
               <option value="bergwiese">Bergwiese</option>
-              <!-- %%%APARTMENT_OPTIONS_DE_END%%% -->
             </select>
           </div>
 

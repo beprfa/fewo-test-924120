@@ -3,4 +3,5 @@ title: 'AGB'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-%%%BOOKING_CONDITIONS_AGB_HTML%%%
+<div class="agb-body"><p>Es gelten die allgemeinen Geschäftsbedingungen des Gastgebers. Mit der Buchung erkennen Sie diese an.</p>
+</div>

@@ -7,11 +7,11 @@ _Stand: Februar 2026_
 
 ## 1. Verantwortlicher
 
-%%%HOST_NAME%%%
-%%%BUILDING_STREET%%% %%%BUILDING_HOUSE_NUMBER%%%
-%%%BUILDING_POSTAL_CODE%%% %%%BUILDING_CITY%%%
+Nicole Neckermann
+Bergstraße 7
+83229 Aschau im Chiemgau
 Deutschland
-E-Mail: %%%HOST_EMAIL%%%
+E-Mail: nicole.neckermann@icloud.com
 
 ## 2. Erhebung personenbezogener Daten
 
@@ -49,7 +49,7 @@ Sie haben gemäß DSGVO folgende Rechte bezüglich Ihrer personenbezogenen Daten
 - **Widerspruch** (Art. 21 DSGVO) — Sie können der Verarbeitung Ihrer Daten widersprechen.
 - **Widerruf der Einwilligung** (Art. 7 Abs. 3 DSGVO) — Soweit die Verarbeitung auf Ihrer Einwilligung beruht, können Sie diese jederzeit widerrufen. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt davon unberührt.
 
-Zur Ausübung Ihrer Rechte schreiben Sie an %%%HOST_EMAIL%%%.
+Zur Ausübung Ihrer Rechte schreiben Sie an nicole.neckermann@icloud.com.
 
 ## 7. Beschwerderecht
 
